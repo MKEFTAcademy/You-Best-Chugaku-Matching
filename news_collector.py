@@ -201,4 +201,3 @@ if __name__ == "__main__":
     
     print(f"\n✅ ニュースを {output_file} に保存しました")
     print(f"📝 収集記事数: {len(articles)}件")
-
