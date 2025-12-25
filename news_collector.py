@@ -195,7 +195,7 @@ if __name__ == "__main__":
     articles = collect_news()
     
     # JSON出力
-    output_file = 'news_articles.json'
+    output_file = 'new_news.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(articles, f, ensure_ascii=False, indent=2)
     
