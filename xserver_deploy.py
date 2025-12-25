@@ -5,6 +5,7 @@ Xserver 自動デプロイスクリプト（GitHub Actions用）
 import paramiko
 import os
 import sys
+import base64
 
 # ========================================
 # 接続情報（環境変数から取得）
@@ -57,9 +58,16 @@ def main():
     try:
         print(f"\n🔗 SSH接続中...")
         
+        # 秘密鍵をBase64デコード
+        try:
+            decoded_key = base64.b64decode(PRIVATE_KEY_CONTENT).decode('utf-8')
+        except:
+            # Base64でない場合はそのまま使用
+            decoded_key = PRIVATE_KEY_CONTENT
+        
         # 秘密鍵を一時ファイルから読み込み
         from io import StringIO
-        private_key_file = StringIO(PRIVATE_KEY_CONTENT)
+        private_key_file = StringIO(decoded_key)
         private_key = paramiko.RSAKey.from_private_key(private_key_file)
         
         # 接続
