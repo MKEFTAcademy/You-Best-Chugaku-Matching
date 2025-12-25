@@ -1,0 +1,51 @@
+.github/workflows/auto-update.yml
+name: Auto Update News
+
+on:
+  schedule:
+    # 毎日21:00 UTC = 日本時間6:00 (UTC+9)
+    - cron: '0 21 * * *'
+  
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+      
+      - name: Pythonセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: 依存関係インストール
+        run: |
+          pip install -r requirements.txt
+      
+      - name: ニュース収集
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_SEARCH_ENGINE_ID: ${{ secrets.GOOGLE_SEARCH_ENGINE_ID }}
+        run: |
+          python news_collector.py
+      
+      - name: script.js更新
+        run: |
+          python news_updater.py
+      
+      - name: Xserverにデプロイ
+        env:
+          XSERVER_PRIVATE_KEY: ${{ secrets.XSERVER_PRIVATE_KEY }}
+        run: |
+          python xserver_deploy.py
+      
+      - name: 結果通知
+        if: always()
+        run: |
+          echo "✅ ワークフロー完了"
+          echo "日時: $(TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M:%S JST')"
