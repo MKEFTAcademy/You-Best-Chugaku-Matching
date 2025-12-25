@@ -1,4 +1,3 @@
-.github/workflows/auto-update.yml
 name: Auto Update News
 
 on:
